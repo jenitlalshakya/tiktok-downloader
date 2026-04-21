@@ -1,65 +1,202 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import Footer from "@/components/Footer";
 
 export default function Home() {
+  const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState("");
+
+  const fetchData = async () => {
+    if (!url) {
+      setError("Please enter a TikTok URL");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+    setData(null);
+
+    try {
+      const res = await fetch(`/api/download?url=${encodeURIComponent(url)}`);
+      const json = await res.json();
+
+      if (!json.success) throw new Error(json.message);
+
+      setData(json.data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const download = (fileUrl: string, filename: string) => {
+    const proxyUrl = `/api/proxy?url=${encodeURIComponent(
+      fileUrl
+    )}&filename=${encodeURIComponent(filename)}`;
+
+    const a = document.createElement("a");
+    a.href = proxyUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const pasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setUrl(text);
+    } catch {
+      alert("Clipboard access denied!");
+    }
+  };
+
+  const isImagePost = data?.mediaType === "image";
+  const isVideoPost = data?.mediaType === "video";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="wrapper">
+      <div className="container">
+        <h1>
+          <span>TikTok</span> Video & Image Downloader
+        </h1>
+
+        <p>Paste TikTok video or photo link below</p>
+
+        <div className="input-group">
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Paste TikTok link here..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") fetchData();
+            }}
+          />
+
+          <button id="pasteBtn" onClick={pasteFromClipboard}>
+            📋 Paste
+          </button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        <button id="fetchBtn" onClick={fetchData} disabled={loading}>
+          {loading ? "Fetching..." : "Download"}
+        </button>
+
+        {error && <p className="error">{error}</p>}
+
+        {data && (
+          <div id="results">
+            <div className="note">
+              Preview and download your TikTok content below.
+            </div>
+
+            {isVideoPost && data.video?.play && (
+              <div>
+                <video
+                  src={data.video.play}
+                  controls
+                  className="preview-video"
+                />
+
+                <button
+                  className="download-btn"
+                  onClick={() =>
+                    download(data.video.play, data.video.filename)
+                  }
+                >
+                  Download Video
+                </button>
+              </div>
+            )}
+
+            {isImagePost && data.images?.length > 0 && (
+              <div className="image-section">
+                <h3>Images</h3>
+
+                <div className="image-scroll-container">
+                  {data.images.map((img: any, i: number) => (
+                    <div key={i} className="image-wrapper">
+                      <img
+                        src={img.url}
+                        className="preview-img"
+                        onClick={() => window.open(img.url, "_blank")}
+                      />
+
+                      <button
+                        className="download-btn"
+                        onClick={() => download(img.url, img.filename)}
+                      >
+                        Download Image {i + 1}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className="download-btn"
+                  onClick={() => {
+                    const urls = data.images.map((img: any) => img.url);
+
+                    const zipUrl = `/api/download-all?images=${encodeURIComponent(
+                      JSON.stringify(urls)
+                    )}`;
+
+                    window.location.href = zipUrl;
+                  }}
+                >
+                  Download All Images (ZIP)
+                </button>
+              </div>
+            )}
+
+            {isImagePost && data.video?.play && (
+              <div>
+                <h3>Audio</h3>
+
+                <audio controls style={{ width: "100%", marginTop: 10 }}>
+                  <source src={data.video.play} />
+                </audio>
+
+                <button
+                  className="download-btn"
+                  onClick={() =>
+                    download(
+                      data.video.play,
+                      data.video.filename.replace(".mp4", ".mp3")
+                    )
+                  }
+                >
+                  Download MP3 / Audio
+                </button>
+              </div>
+            )}
+
+            {data.cover?.url && (
+              <div>
+                <img
+                  src={data.cover.url}
+                  className="preview-img"
+                  style={{ width: 200, marginTop: 10 }}
+                />
+
+                <button
+                  className="download-btn"
+                  onClick={() =>
+                    download(data.cover.url, data.cover.filename)
+                  }
+                >
+                  Download Thumbnail
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <Footer />
     </div>
   );
 }
