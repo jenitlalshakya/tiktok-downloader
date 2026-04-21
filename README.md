@@ -1,36 +1,133 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎵 TikTok Media Downloader (Next.js)
 
-## Getting Started
+A modern, high-performance full-stack TikTok downloader built with **Next.js**. Download videos (no watermark), image slides, and audio (MP3) effortlessly by pasting a link.
 
-First, run the development server:
+This project represents a **complete migration** from a decoupled backend/frontend architecture to a unified **Next.js Fullstack application**, optimized for performance, SEO, and seamless deployment.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Live Demo
+[View Live Project](https://tiktok-media-downloader.vercel.app)
+
+---
+
+## 📌 Project Migration
+
+This application was originally built using a separate backend service. To improve developer experience and site performance, it was migrated to a **Next.js App Router architecture**.
+
+### Key Improvements:
+* **Unified Repo:** Frontend UI and Backend API routes (`/app/api`) live in one place.
+* **Stream-based Handling:** Improved file downloading using Node.js streams.
+* **Serverless Optimization:** Leverages Vercel Serverless Functions for cost-effective scaling.
+* **Enhanced SEO:** Dynamic OpenGraph support and better metadata handling.
+
+---
+
+## ✨ Features
+
+* 🎬 **No-Watermark Videos:** Download TikTok videos in high quality.
+* 🖼️ **Image Slides:** Support for downloading TikTok image-based posts.
+* 🎧 **Audio Extraction:** Convert and download audio in MP3 format.
+* ⚡ **Fast Streaming:** Direct file streaming to bypass memory bottlenecks.
+* 📋 **Smart Clipboard:** Quick-paste link support for mobile and desktop.
+* 📱 **Responsive Design:** Optimized for all screen sizes.
+* 🚀 **Edge Ready:** Fully optimized for deployment on Vercel.
+
+---
+
+## 🛠 Tech Stack
+
+| Feature | Technology |
+| :--- | :--- |
+| **Framework** | Next.js 14+ (App Router) |
+| **Frontend** | React, TypeScript |
+| **Backend** | Node.js (Next.js API Routes) |
+| **Infrastructure** | Vercel Serverless Functions |
+| **Processing** | Streams API (for efficient downloads) |
+| **Styling** | Custom CSS / Tailwind |
+
+---
+
+## 📁 Project Structure
+
+```text
+app/
+├── api/
+│   ├── download/     # Fetches TikTok media data
+│   ├── download-all/ # ZIP download handler
+│   └── proxy/        # File streaming proxy to bypass CORS
+├── page.tsx          # Main application UI
+├── layout.tsx        # SEO & Global Metadata
+components/
+└── Footer.tsx        # Reusable UI components
+public/
+├── icon.png          # Favicon assets
+└── og-image.png      # Social sharing preview image
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚙️ Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file in your root directory:
 
-## Learn More
+```env
+# Control search engine indexing (false for dev, true for prod)
+NEXT_PUBLIC_INDEX=false
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Local Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repo:**
+   ```bash
+   git clone [https://github.com/your-username/tiktok-media-downloader.git](https://github.com/your-username/tiktok-media-downloader.git)
+   ```
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+3. **Run the development server:**
+   ```bash
+   pnpm dev
+   ```
+4. **Build for production:**
+   ```bash
+   pnpm build
+   ```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚀 Deployment (Vercel)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push your repository to GitHub.
+2. Import the project into the [Vercel Dashboard](https://vercel.com).
+3. Add your Environment Variables.
+4. Click **Deploy**. Vercel will automatically detect the Next.js configuration.
+
+---
+
+## ⚠️ Notes & Limitations
+
+* **Third-Party APIs:** This project relies on external endpoints to fetch TikTok metadata.
+* **Streaming:** Large files are streamed directly to the user to avoid Vercel's execution memory limits.
+* **ZIP Limitations:** The "Download All" feature may be subject to serverless timeout limits for very large albums.
+* **Usage:** This tool is for educational purposes. Please respect TikTok's terms of service and content creators' rights.
+
+---
+
+## 📈 SEO Optimization
+
+* **OpenGraph:** Dynamic meta tags for rich social media sharing.
+* **Twitter Cards:** Fully compatible with Twitter/X link previews.
+* **Indexing Control:** Environment-based `robots.txt` control via `NEXT_PUBLIC_INDEX`.
+
+---
+
+## 👨‍💻 Author
+**Jenit Lal Shakya**
+
+## 📜 License
+This project is for educational purposes only. All TikTok content and branding belong to ByteDance Ltd.
+```

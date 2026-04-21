@@ -12,8 +12,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const isProduction = process.env.NEXT_PUBLIC_INDEX === "true";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://yourdomain.com"),
+  metadataBase: new URL("https://tiktok-media-downloader.vercel.app"),
 
   title: {
     default: "TikTok Video & Image Downloader (No Watermark)",
@@ -40,7 +42,7 @@ export const metadata: Metadata = {
     title: "TikTok Video & Image Downloader (No Watermark)",
     description:
       "Download TikTok videos & images without watermark instantly. Free, fast and secure.",
-    url: "https://yourdomain.com",
+    url: "https://tiktok-media-downloader.vercel.app",
     siteName: "TikTok Downloader",
     images: [
       {
@@ -63,11 +65,11 @@ export const metadata: Metadata = {
   },
 
   robots: {
-    index: true,
-    follow: true,
+    index: isProduction,
+    follow: isProduction,
     googleBot: {
-      index: true,
-      follow: true,
+      index: isProduction,
+      follow: isProduction,
       "max-video-preview": -1,
       "max-image-preview": "large",
       "max-snippet": -1,
