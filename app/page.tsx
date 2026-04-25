@@ -91,112 +91,130 @@ export default function Home() {
 
         {error && <p className="error">{error}</p>}
 
-        {data && (
-          <div id="results">
-            <div className="note">
-              Preview and download your TikTok content below.
+        <div id="results" className="results">
+          {loading && !data && (
+            <div className="skeleton-container">
+              <p className="loading-text">Fetching Data...</p>
+              <div className="skeleton-loading"></div>
+              <div className="skeleton-loading"></div>
+              <div className="skeleton-loading"></div>
             </div>
-
-            {isVideoPost && data.video?.play && (
-              <div>
-                <video
-                  src={data.video.play}
-                  controls
-                  className="preview-video"
-                />
-
-                <button
-                  className="download-btn"
-                  onClick={() =>
-                    download(data.video.play, data.video.filename)
-                  }
-                >
-                  Download Video
-                </button>
+          )}
+          
+          {data && (
+            <>
+              <div className="note">
+                Preview and download your TikTok content below.
               </div>
-            )}
 
-            {isImagePost && data.images?.length > 0 && (
-              <div className="image-section">
-                <h3>Images</h3>
+              {isVideoPost && data.video?.play && (
+                <div className="media-block">
+                  <video
+                    src={data.video.play}
+                    controls
+                    className="preview-video"
+                  />
 
-                <div className="image-scroll-container">
-                  {data.images.map((img: any, i: number) => (
-                    <div key={i} className="image-wrapper">
-                      <img
-                        src={img.url}
-                        className="preview-img"
-                        onClick={() => window.open(img.url, "_blank")}
-                      />
-
-                      <button
-                        className="download-btn"
-                        onClick={() => download(img.url, img.filename)}
-                      >
-                        Download Image {i + 1}
-                      </button>
-                    </div>
-                  ))}
+                  <button
+                    className="download-btn"
+                    onClick={() =>
+                      download(data.video.play, data.video.filename)
+                    }
+                  >
+                    Download Video
+                  </button>
                 </div>
-                <button
-                  className="download-btn"
-                  onClick={() => {
-                    const urls = data.images.map((img: any) => img.url);
+              )}
 
-                    const zipUrl = `/api/download-all?images=${encodeURIComponent(
-                      JSON.stringify(urls)
-                    )}`;
+              {isImagePost && data.images?.length > 0 && (
+                <div className="image-section">
 
-                    window.location.href = zipUrl;
-                  }}
-                >
-                  Download All Images (ZIP)
-                </button>
-              </div>
-            )}
+                  <h3>Images</h3>
 
-            {isImagePost && data.video?.play && (
-              <div>
-                <h3>Audio</h3>
+                  <div className="image-scroll-container">
+                    {data.images.map((img: any, i: number) => (
+                      <div key={i} className="image-wrapper">
 
-                <audio controls style={{ width: "100%", marginTop: 10 }}>
-                  <source src={data.video.play} />
-                </audio>
+                        <img
+                          src={img.url}
+                          className="preview-img"
+                          onClick={() => window.open(img.url, "_blank")}
+                        />
 
-                <button
-                  className="download-btn"
-                  onClick={() =>
-                    download(
-                      data.video.play,
-                      data.video.filename.replace(".mp4", ".mp3")
-                    )
-                  }
-                >
-                  Download MP3 / Audio
-                </button>
-              </div>
-            )}
+                        <button
+                          className="download-btn"
+                          onClick={() => download(img.url, img.filename)}
+                        >
+                          Download Image {i + 1}
+                        </button>
 
-            {data.cover?.url && (
-              <div>
-                <img
-                  src={data.cover.url}
-                  className="preview-img"
-                  style={{ width: 200, marginTop: 10 }}
-                />
+                      </div>
+                    ))}
+                  </div>
 
-                <button
-                  className="download-btn"
-                  onClick={() =>
-                    download(data.cover.url, data.cover.filename)
-                  }
-                >
-                  Download Thumbnail
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+                  <button
+                    className="download-btn"
+                    onClick={() => {
+                      const urls = data.images.map((img: any) => img.url);
+
+                      const zipUrl = `/api/download-all?images=${encodeURIComponent(
+                        JSON.stringify(urls)
+                      )}`;
+
+                      window.location.href = zipUrl;
+                    }}
+                  >
+                    Download All Images (ZIP)
+                  </button>
+
+                </div>
+              )}
+
+              {isImagePost && data.video?.play && (
+                <div className="media-block">
+                  <h3>Audio</h3>
+
+                  <audio controls style={{ width: "100%", marginTop: 10 }}>
+                    <source src={data.video.play} />
+                  </audio>
+
+                  <button
+                    className="download-btn"
+                    onClick={() =>
+                      download(
+                        data.video.play,
+                        data.video.filename.replace(".mp4", ".mp3")
+                      )
+                    }
+                  >
+                    Download MP3 / Audio
+                  </button>
+                </div>
+              )}
+
+              {data.cover?.url && (
+                <div className="media-block">
+
+                  <img
+                    src={data.cover.url}
+                    className="preview-img"
+                    style={{ width: 200, marginTop: 10 }}
+                  />
+
+                  <button
+                    className="download-btn"
+                    onClick={() =>
+                      download(data.cover.url, data.cover.filename)
+                    }
+                  >
+                    Download Thumbnail
+                  </button>
+
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
       <Footer />
     </div>
