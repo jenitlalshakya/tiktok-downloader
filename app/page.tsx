@@ -10,6 +10,8 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const fetchData = async () => {
+    if (loading) return;
+    
     if (!url) {
       setError("Please enter a TikTok URL");
       return;
