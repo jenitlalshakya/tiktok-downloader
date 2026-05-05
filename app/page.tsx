@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Footer from "@/components/Footer";
 
 export default function Home() {
   const [url, setUrl] = useState("");
+  const [pasteLabel, setPasteLabel] = useState("📋 Paste");
+  const [isLocked, setIsLocked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState("");
@@ -48,14 +50,46 @@ export default function Home() {
     document.body.removeChild(a);
   };
 
+  const extractTikTokUrl = (text: string): string => {
+    const match = text.match(
+      /https?:\/\/(www\.)?(tiktok\.com|vt\.tiktok\.com)\/[^\s]+/
+    );
+
+    return match ? match[0] : "";
+  };
+
   const pasteFromClipboard = async () => {
     try {
       const text = await navigator.clipboard.readText();
-      setUrl(text);
+      const cleanUrl = extractTikTokUrl(text);
+
+      if (cleanUrl) {
+        setUrl(cleanUrl);
+        setPasteLabel("Pasted ✅");
+        setIsLocked(true);
+
+        setTimeout(() => setPasteLabel("📋 Paste"), 2500);
+      } else {
+        setUrl("");
+        setPasteLabel("No link ❌");
+
+        setTimeout(() => setPasteLabel("📋 Paste"), 2500);
+      }
     } catch {
       alert("Clipboard access denied!");
     }
   };
+
+  const handlePasteEvent = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData("text");
+    const cleanUrl = extractTikTokUrl(text);
+
+    if (cleanUrl) {
+      e.preventDefault();
+      setUrl(cleanUrl);
+      setIsLocked(true);
+    }
+  }
 
   const isImagePost = data?.mediaType === "image";
   const isVideoPost = data?.mediaType === "video";
@@ -73,7 +107,18 @@ export default function Home() {
           <input
             type="url"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "") {
+                setUrl("");
+                setIsLocked(false);
+                return;
+              }
+
+              const cleaned = extractTikTokUrl(value);
+              setUrl(cleaned || value);
+            }}
+            onPaste={handlePasteEvent}
             placeholder="Paste TikTok link here..."
             onKeyDown={(e) => {
               if (e.key === "Enter") fetchData();
@@ -81,7 +126,7 @@ export default function Home() {
           />
 
           <button id="pasteBtn" onClick={pasteFromClipboard}>
-            📋 Paste
+            {pasteLabel}
           </button>
         </div>
 
