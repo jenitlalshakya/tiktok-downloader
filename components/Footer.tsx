@@ -1,10 +1,11 @@
-import React from "react";
+import { FeedbackLink } from "./feedback/FeedbackLink";
 
-const Footer = () => {
+export const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
     <footer>
+      <FeedbackLink />
       © {year} TikTok Video & Image Downloader<br />
       Made with ❤️ by <strong>Jenit Lal Shakya</strong><br />
       Not affiliated with TikTok or ByteDance Ltd.<br />
@@ -12,5 +13,3 @@ const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;

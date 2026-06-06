@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Footer from "@/components/Footer";
+import { Footer } from "@/components/Footer";
 
 export default function Home() {
   const [url, setUrl] = useState("");
