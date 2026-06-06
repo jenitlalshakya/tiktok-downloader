@@ -1,19 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { BacktrackButton, FeedbackTypeButton } from "../ui/Button";
 import {
   HiBugAnt,
   HiSparkles,
   HiChatBubbleBottomCenterText,
   HiPaperAirplane,
-  HiArrowLeft,
   HiCheckCircle,
 } from "react-icons/hi2";
 
 export const FeedbackForm = () => {
-  const router = useRouter();
-
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
@@ -90,27 +87,7 @@ export const FeedbackForm = () => {
             marginBottom: "10px",
           }}
         >
-          <button
-            type="button"
-            onClick={() => router.back()}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "6px",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              color: "white",
-              padding: "10px",
-              borderRadius: "10px",
-              cursor: "pointer",
-              minWidth: "42px",
-              minHeight: "42px",
-            }}
-            title="Go back"
-          >
-            <HiArrowLeft size={20} />
-          </button>
+          <BacktrackButton />
 
           <h1
             style={{
@@ -163,39 +140,15 @@ export const FeedbackForm = () => {
             </p>
 
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {feedbackTypes.map((t) => {
-                const Icon = t.icon;
-                const active = type === t.id;
-
-                return (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setType(t.id)}
-                    style={{
-                      flex: 1,
-                      minWidth: "120px",
-                      padding: "12px",
-                      borderRadius: "12px",
-                      border: active
-                        ? "1px solid #00f2ea"
-                        : "1px solid rgba(255,255,255,0.12)",
-                      background: active
-                        ? "rgba(0,242,234,0.08)"
-                        : "rgba(255,255,255,0.03)",
-                      color: "white",
-                      cursor: "pointer",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "6px",
-                    }}
-                  >
-                    <Icon size={20} />
-                    <span style={{ fontSize: "0.75rem" }}>{t.label}</span>
-                  </button>
-                );
-              })}
+              {feedbackTypes.map((t) => (
+                <FeedbackTypeButton
+                  key={t.id}
+                  label={t.label}
+                  icon={t.icon}
+                  active={type === t.id}
+                  onClick={() => setType(t.id)}
+                />
+              ))}
             </div>
           </div>
 
