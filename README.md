@@ -82,7 +82,7 @@ NEXT_PUBLIC_INDEX=false
 
 1. **Clone the repo:**
    ```bash
-   git clone [https://github.com/your-username/tiktok-media-downloader.git](https://github.com/your-username/tiktok-media-downloader.git)
+   git clone https://github.com/jenitlalshakya/tiktok-downloader.git
    ```
 2. **Install dependencies:**
    ```bash
