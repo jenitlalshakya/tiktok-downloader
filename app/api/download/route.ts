@@ -5,16 +5,21 @@ const generateFilename = (
   username: string,
   videoId: string,
   fileType: "video" | "image" | "thumbnail" = "video",
-  index: number = 1
+  index: number = 1,
+  isStory: boolean = false
 ) => {
   username = username || "unknown_user";
   videoId = videoId || "unknown_id";
 
-  if (fileType === "video") return `@${username}_${videoId}.mp4`;
-  if (fileType === "image") return `@${username}_${videoId}_img${index}.jpg`;
-  if (fileType === "thumbnail") return `@${username}_${videoId}_thumbnail.jpg`;
+  const baseName = isStory
+    ? `@${username}_story_${videoId}`
+    : `@${username}_${videoId}`;
+  
+  if (fileType === "video") return `${baseName}.mp4`;
+  if (fileType === "image") return `${baseName}_img${index}.jpg`;
+  if (fileType === "thumbnail") return `${baseName}_thumbnail.jpg`;
 
-  return `@${username}_${videoId}`;
+  return baseName;
 };
 
 export const GET = async (req: NextRequest) => {
@@ -66,6 +71,7 @@ export const GET = async (req: NextRequest) => {
       data.data?.author?.unique_id ||
       data.data?.author?.nickname ||
       "unknown_user";
+    const isStory = data.data?.is_story === true;
 
     const hasImages =
       Array.isArray(data.data?.images) && data.data.images.length > 0;
@@ -91,7 +97,7 @@ export const GET = async (req: NextRequest) => {
         video: hasVideo
           ? {
               play: data.data.play,
-              filename: generateFilename(username, videoId, "video"),
+              filename: generateFilename(username, videoId, "video", 1, isStory),
               hasAudio: true,
             }
           : null,
@@ -99,14 +105,14 @@ export const GET = async (req: NextRequest) => {
         images: hasImages
           ? data.data.images.map((img: any, idx: number) => ({
               url: typeof img === "string" ? img : img.url || img,
-              filename: generateFilename(username, videoId, "image", idx + 1),
+              filename: generateFilename(username, videoId, "image", idx + 1, isStory),
             }))
           : [],
 
         cover: coverUrl
           ? {
               url: coverUrl,
-              filename: generateFilename(username, videoId, "thumbnail"),
+              filename: generateFilename(username, videoId, "thumbnail", 1, isStory),
             }
           : null,
       },

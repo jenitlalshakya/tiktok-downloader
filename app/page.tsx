@@ -50,6 +50,23 @@ export default function Home() {
     document.body.removeChild(a);
   };
 
+  const downloadAllImages = () => {
+    const images = data.images.map((img: any) => ({
+      url: img.url,
+      filename: img.filename,
+    }));
+
+    const zipFilename =
+      data.images[0]?.filename?.replace(/_img\d+\.jpg$/i, ".zip") ||
+      "images.zip";
+    
+    const zipUrl = `/api/download-all?images=${encodeURIComponent(
+      JSON.stringify(images)
+    )}&filename=${encodeURIComponent(zipFilename)}`;
+
+    window.location.href = zipUrl;
+  };
+
   const extractTikTokUrl = (text: string): string => {
     const match = text.match(
       /https?:\/\/(www\.)?(tiktok\.com|vt\.tiktok\.com)\/[^\s]+/
@@ -89,7 +106,7 @@ export default function Home() {
       setUrl(cleanUrl);
       setIsLocked(true);
     }
-  }
+  };
 
   const isImagePost = data?.mediaType === "image";
   const isVideoPost = data?.mediaType === "video";
@@ -199,15 +216,7 @@ export default function Home() {
 
                   <button
                     className="download-btn"
-                    onClick={() => {
-                      const urls = data.images.map((img: any) => img.url);
-
-                      const zipUrl = `/api/download-all?images=${encodeURIComponent(
-                        JSON.stringify(urls)
-                      )}`;
-
-                      window.location.href = zipUrl;
-                    }}
+                    onClick={downloadAllImages}
                   >
                     Download All Images (ZIP)
                   </button>
