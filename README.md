@@ -128,6 +128,7 @@ NEXT_PUBLIC_INDEX=false
 ## 👨‍💻 Author
 **Jenit Lal Shakya**
 
+---
+
 ## 📜 License
 This project is for educational purposes only. All TikTok content and branding belong to ByteDance Ltd.
-```
